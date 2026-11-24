@@ -14,6 +14,9 @@ body { margin: 0; font-family: Arial, sans-serif; color: #1f2937; background: #f
 .stats strong, .stats span { display: block; }
 .stats strong { font-size: 32px; }
 .stats span { color: #64748b; margin-top: 5px; }
+.dashboard-section { background: white; padding: 18px; border-radius: 8px; margin-top: 22px; box-shadow: 0 2px 8px #0001; }
+.dashboard-section h2 { margin-top: 0; }
+.dashboard-section table { box-shadow: none; }
 .panel { background: white; padding: 16px; border-radius: 8px; margin-bottom: 16px; }
 table { width: 100%; border-collapse: collapse; background: white; }
 th, td { text-align: left; padding: 12px; border-bottom: 1px solid #e5e7eb; }

@@ -28,12 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = $cover;
         } else {
             $slug = unique_post_slug($pdo, $title);
-            $publishedAt = $status === 'published' ? date('Y-m-d H:i:s') : null;
             $stmt = $pdo->prepare(
                 'INSERT INTO posts (category_id, author_id, title, slug, excerpt, body, cover_image, status, published_at)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, CASE WHEN ? = "published" THEN NOW() ELSE NULL END)'
             );
-            $stmt->execute([$categoryId, $_SESSION['admin_id'], $title, $slug, $excerpt ?: null, $body, $cover, $status, $publishedAt]);
+            $stmt->execute([$categoryId, $_SESSION['admin_id'], $title, $slug, $excerpt ?: null, $body, $cover, $status, $status]);
             flash('success', 'Post created.');
             redirect('admin/posts/index.php');
         }

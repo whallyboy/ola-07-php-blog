@@ -37,13 +37,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $slug = unique_post_slug($pdo, $title, $id);
             $cover = $cover ?? $post['cover_image'];
-            $publishedAt = $status === 'published'
-                ? ($post['published_at'] ?: date('Y-m-d H:i:s'))
-                : null;
             $update = $pdo->prepare(
-                'UPDATE posts SET category_id = ?, title = ?, slug = ?, excerpt = ?, body = ?, cover_image = ?, status = ?, published_at = ? WHERE id = ?'
+                'UPDATE posts SET category_id = ?, title = ?, slug = ?, excerpt = ?, body = ?, cover_image = ?, status = ?,
+                 published_at = CASE
+                    WHEN ? = "published" AND published_at IS NULL THEN NOW()
+                    WHEN ? = "draft" THEN NULL
+                    ELSE published_at
+                 END
+                 WHERE id = ?'
             );
-            $update->execute([$categoryId, $title, $slug, $excerpt ?: null, $body, $cover, $status, $publishedAt, $id]);
+            $update->execute([$categoryId, $title, $slug, $excerpt ?: null, $body, $cover, $status, $status, $status, $id]);
             if ($cover !== $post['cover_image'] && $post['cover_image']) {
                 $old = dirname(dirname(__DIR__)) . '/uploads/' . basename($post['cover_image']);
                 if (is_file($old)) unlink($old);

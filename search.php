@@ -19,13 +19,13 @@ if ($query !== '') {
     $stmt->execute([$query]);
     $posts = $stmt->fetchAll();
 
-    if (!$posts) {
-        $like = '%' . str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $query) . '%';
+    if (mb_strlen($query, 'UTF-8') < 3 || !$posts) {
+        $like = '%' . str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $query) . '%';
         $stmt = $pdo->prepare(
             'SELECT p.*, c.name AS category_name, c.slug AS category_slug
              FROM posts p JOIN categories c ON c.id = p.category_id
              WHERE p.status = "published"
-               AND (p.title LIKE ? ESCAPE "\\" OR p.body LIKE ? ESCAPE "\\")
+               AND (p.title LIKE ? ESCAPE \'!\' OR p.body LIKE ? ESCAPE \'!\')
              ORDER BY COALESCE(p.published_at, p.created_at) DESC
              LIMIT 50'
         );
